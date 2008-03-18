@@ -1,5 +1,0 @@
-#Wed Feb 06 11:55:27 MSK 2008
-eclipse.preferences.version=1
-org.eclipse.php.core.contextRoot=
-org.eclipse.php.core.defaultEncoding=
-org.eclipse.php.core.includePath=<?xml version\="1.0" encoding\="UTF-8"?>\n<includepath>\n\t<includepathentry createdReference\="true" resource\="SabreAMF" path\="/SabreAMF" contentKind\="source" kind\="prj">\n</includepathentry>\n</includepath>\n
