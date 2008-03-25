@@ -1,16 +1,11 @@
 <?php
-$path = '/home/allen/workspace2/lib';
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);		
-
-require_once dirname(__FILE__).'/../Yamdi/Struct.php';
-require_once dirname(__FILE__).'/../Yamdi/FlvFileHeader.php';
-require_once dirname(__FILE__).'/../Yamdi/FlvTag.php';
-require_once dirname(__FILE__).'/../Yamdi/FlvTagSize.php';
-require_once dirname(__FILE__).'/../Yamdi/FlvMetadataBody.php';
-require_once dirname(__FILE__).'/../Yamdi/InputStream.php';
+require_once dirname(__FILE__).'/../autoload.php';
 
 class FlvTestCase extends UnitTestCase
 {
+	/**
+	 * @deprecated 
+	 */
 	public function testFileRead()
 	{
 		/*
@@ -92,6 +87,9 @@ class FlvTestCase extends UnitTestCase
 		$stream->close();
 	}
 
+	/**
+	 * @deprecated 
+	 */
 	public function testMetadataWriteback()
 	{
 		/*

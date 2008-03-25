@@ -11,32 +11,25 @@ require_once dirname(__FILE__).'/../autoload.php';
 Mock::generate('Yamdi_InputStream');
 Mock::generate('Yamdi_OutputStream');
 
-class FlvFileHeaderTestCase extends UnitTestCase
+class FlvTagSizeTestCase extends UnitTestCase
 {
 	public function testReadWrite()
 	{
-		/* byte image of a valid flv header */ 
-		$bytes = 'FLV'.
-			chr(1).
-			chr(5).
-			chr(0).chr(0).chr(0).chr(9);
-
+		$bytes = chr(0).chr(0).chr(0).chr(1); // 32-bit big-endian integer 
+		
 		/* preparing mock streams */
 		$inputStream = new MockYamdi_InputStream();
 		$inputStream->setReturnValue('read', $bytes);
 		
 		$outputStream = new MockYamdi_OutputStream();
-		$outputStream->setReturnValue('write', strlen($bytes));
-		$outputStream->expect('write', array($bytes));
+		$outputStream->setReturnValue('write', 4);
+		$outputStream->expectOnce('write', array($bytes));
 		
 		/* reading tag */
-		$tag = new Yamdi_FlvFileHeader();
+		$tag = new Yamdi_FlvTagSize();
 		$tag->read($inputStream);
 		
-		$this->assertEqual($tag->signature, 'FLV');
-		$this->assertEqual($tag->version, 1);
-		$this->assertEqual($tag->flags, 5);
-		$this->assertEqual($tag->headersize, 9);
+		$this->assertEqual($tag->size, 1);
 		
 		/* writing tag */
 		$tag->write($outputStream);

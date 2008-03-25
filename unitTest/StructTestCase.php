@@ -1,6 +1,12 @@
 <?php
+/**
+ * Simpletest test case
+ * 
+ * @author Allen
+ * @package PhpYamdi (http://phpyamdi.berlios.de/)
+ */
 
-require_once dirname(__FILE__).'/../Yamdi/Struct.php';
+require_once dirname(__FILE__).'/../autoload.php';
 
 class StructTestCase extends UnitTestCase
 {
