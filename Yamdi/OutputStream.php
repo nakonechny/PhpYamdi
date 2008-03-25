@@ -46,12 +46,16 @@ class Yamdi_OutputStream
 	 * @param Yamdi_InputStream $source
 	 * @param int $fromPosition
 	 */
-	public function passthrough(Yamdi_InputStream $source, $fromPosition)
+	public function passthrough(Yamdi_InputStream $source, $fromPosition, $size = null)
 	{
 		$source->seek($fromPosition);
 		
-		while($data = $source->read($this->passthrough_chunk_size)) {
-			$this->write($data);
+		if (null === $size) {
+			while($data = $source->read($this->passthrough_chunk_size)) {
+				$this->write($data);
+			}
+		} else {
+			$this->write($source->read($size));
 		}
 	}
 	

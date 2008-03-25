@@ -5,16 +5,19 @@
  * @see http://code.google.com/p/sabreamf/
  * @see http://osflash.org/sabreamf
  */
-$path = '/home/allen/workspace2/lib';
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-
-require_once dirname(__FILE__).'/Yamdi/FlvFile.php';
+require_once dirname(__FILE__).'/autoload.php';
 
 /*
  * Usage example
  */
-$flv = new Yamdi_FlvFile();
+$flv = new Yamdi_FlvMetadataInjector();
 $flv->run(
-	dirname(__FILE__).'/trailer_2.flv',
-	dirname(__FILE__).'/trailer_2_meta1.flv'
+	dirname(__FILE__).'/../PhpYamdi_data/trailer_2.flv',
+	dirname(__FILE__).'/../PhpYamdi_data/trailer_2_meta.flv'
+);
+
+$thumb = new Yamdi_FlvThumbnailMaker();
+$thumb->run(
+	dirname(__FILE__).'/../PhpYamdi_data/trailer_2.flv',
+	dirname(__FILE__).'/../PhpYamdi_data/trailer_2_thumb.flv'
 );

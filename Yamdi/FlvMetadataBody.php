@@ -4,10 +4,6 @@
  * @package PhpYamdi (http://phpyamdi.berlios.de/)
  */
 
-require_once 'SabreAMF/AMF0/Const.php';
-require_once dirname(__FILE__).'/AmfSerializer.php';
-require_once dirname(__FILE__).'/AmfDeserializer.php';
-
 class Yamdi_FlvMetadataBody
 {
 	protected $mixedArray = array();

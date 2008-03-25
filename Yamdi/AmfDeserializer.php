@@ -4,9 +4,6 @@
  * @package PhpYamdi (http://phpyamdi.berlios.de/)
  */
 
-require_once 'SabreAMF/AMF0/Deserializer.php';
-require_once dirname(__FILE__).'/SabreAmfAmf0DeserializerFixed.php';
-
 class Yamdi_AmfDeserializer
 {
 	/**

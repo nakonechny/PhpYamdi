@@ -4,8 +4,6 @@
  * @package PhpYamdi (http://phpyamdi.berlios.de/)
  */
 
-require_once 'SabreAMF/AMF0/Deserializer.php';
-
 /**
  * Some methods of SabreAMF_AMF0_Deserializer is reloaded to provide ability 
  * to read mixed array as an ARRARY instead of an object
@@ -47,7 +45,7 @@ class Yamdi_SabreAmfAmf0DeserializerFixed extends SabreAMF_AMF0_Deserializer
 	 */
 	public function readMixedArray()
 	{
-		$highestIndex = $this->stream->readLong();
+		$this->stream->readLong();
 		
 		return $this->readObject(true);
 	}

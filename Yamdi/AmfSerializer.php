@@ -4,8 +4,6 @@
  * @package PhpYamdi (http://phpyamdi.berlios.de/)
  */
 
-require_once 'SabreAMF/AMF0/Serializer.php';
-
 class Yamdi_AmfSerializer
 {
 	/**

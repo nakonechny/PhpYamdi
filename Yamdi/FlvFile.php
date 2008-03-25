@@ -4,19 +4,18 @@
  * @package PhpYamdi (http://phpyamdi.berlios.de/)
  */
 
-require_once dirname(__FILE__).'/Struct.php';
-require_once dirname(__FILE__).'/FlvFileHeader.php';
-require_once dirname(__FILE__).'/FlvTag.php';
-require_once dirname(__FILE__).'/FlvTagSize.php';
-require_once dirname(__FILE__).'/FlvMetadataBody.php';
-require_once dirname(__FILE__).'/InputStream.php';
-require_once dirname(__FILE__).'/OutputStream.php';
-
 class Yamdi_FlvFile
 {
 	static $version = '0.1';
 	
+	/**
+	 * @var string
+	 */
 	protected $sourceFilename;
+	/**
+	 * @var int
+	 */
+	protected $sourceMediaTagsStartPosition;
 	
 	/*
 	 * File parts 
@@ -47,29 +46,11 @@ class Yamdi_FlvFile
 	 */
 	protected $metadataTagSize;
 
-	/*
-	 * Calculated values
-	 */
-	
-	/**
-	 * @var array(int)
-	 */
-	protected $filepositions;
-	/**
-	 * @var array(float)
-	 */
-	protected $times;
-	
 	/**
 	 * @var int
 	 */
 	protected $metadataTagBodyLenghth;
 	
-	/**
-	 * @var int
-	 */
-	protected $mediaTagsStartPosition;
-
 	public function __construct()
 	{
 		$this->header		= new Yamdi_FlvFileHeader();
@@ -78,19 +59,10 @@ class Yamdi_FlvFile
 		$this->metadataTag	= new Yamdi_FlvTag();
 		$this->metadataTagSize = new Yamdi_FlvTagSize();
 	}
-	
-	public function run($source, $destination)
-	{
-		$this->read($source);
-		$this->metadata->metadatacreator = "Allen's Php_Yamdi version ".self::$version; 
-		$this->injectKeyframes();
-		$this->write($destination);
-	}
-	
+		
 	/**
-	 * Decomposes a file into flv tags while reading. Searches for keyframes
-	 * 
 	 * @param string $filename
+	 * @return Yamdi_InputStream
 	 */
 	protected function read($filename)
 	{
@@ -131,84 +103,9 @@ class Yamdi_FlvFile
 		 */
 		$this->metadataTagSize->read($stream);
 
-		$this->filepositions	= array();
-		$this->times			= array();
+		$this->sourceMediaTagsStartPosition = $stream->getPosition();
 		
-		$this->mediaTagsStartPosition = $stream->getPosition();
-		
-		$tag = new Yamdi_FlvTag();
-		
-		while (!$stream->isEnd())
-		{
-			$tag_position = $stream->getPosition();
-			
-			/*
-			 * Tag
-			 */
-			if (!$tag->read($stream)) {
-				break;
-			}
-			if (!$tag->isValid()) {
-				throw new Exception('Invalid tag found');
-			}
-			
-			if ($tag->isVideo()) {
-				if ($tag->checkIfKeyFrame($stream))
-				{
-					$this->filepositions[] = $tag_position;
-					$this->times[] = $tag->getTimestamp() / 1000.0;
-				}
-			}
-			
-			$tag->skipTagBody($stream);	// wind forward to next tag
-			
-			/*
-			 * Previous tag size
-			 */
-			$tagSize = new Yamdi_FlvTagSize();
-			if (!$tagSize->read($stream)) {
-				break;
-			}
-		}
-
-		/*
-		 * Cleanup
-		 */
-		$stream->close();
-	}
-	
-	protected function injectKeyframes()
-	{
-		/*
-		 * Calculating byte shift
-		 */
-		$old_size = $this->metadataTagBodyLenghth;
-		
-		$keyframes = new stdClass();
-		$keyframes->filepositions = $this->filepositions;
-		$keyframes->times = $this->times;
-		$this->metadata->keyframes = $keyframes;
-		
-		$new_size = $this->metadata->getSize();
-		
-		$fileposition_shift = $new_size - $old_size;
-		
-		/*
-		 * Shifting filepositions
-		 */
-		foreach ($this->filepositions as $key=>$value) {
-			$this->filepositions[$key] = $value + $fileposition_shift;
-		}
-
-		/*
-		 * Assigning keyfremes with shifted filepositions
-		 */
-		$keyframes->filepositions = $this->filepositions;
-		$this->metadata->keyframes = $keyframes;
-		
-		$this->metadataTagSize->size += $fileposition_shift;
-		
-		$this->metadataTag->setDataSize($new_size);
+		return $stream;
 	}
 	
 	protected function write($filename)
@@ -228,16 +125,41 @@ class Yamdi_FlvFile
 		
 		$this->header->write($stream);
 		$this->zeroTagSize->write($stream);
+		$this->writeMetaBlock($stream);
+		$this->writeMediaBlocks($stream);
+		
+		$stream->close();
+	}
+	
+	/**
+	 * Writing media tags (passing through with no changes)
+	 * 
+	 * @param Yamdi_OutputStream $stream
+	 */
+	protected function writeMediaBlocks($stream)
+	{
+		$stream->passthrough(new Yamdi_InputStream($this->sourceFilename), $this->sourceMediaTagsStartPosition);
+	}
+	
+	protected function writeMetaBlock($stream)
+	{
+		$this->shiftMetaSize();
+		
 		$this->metadataTag->write($stream);
 		$stream->write($this->metadata->write());
 		$this->metadataTagSize->write($stream);
+	}
+	
+	protected function shiftMetaSize()
+	{
+		$old_size = $this->metadataTagBodyLenghth;
+		$new_size = $this->metadata->getSize();
 		
-		/*
-		 * Writing media tags (passing through with no changes)
-		 */
+		$shift = $new_size - $old_size;
 		
-		$stream->passthrough(new Yamdi_InputStream($this->sourceFilename), $this->mediaTagsStartPosition);
+		$this->metadataTagSize->size += $shift;
+		$this->metadataTag->setDataSize($new_size);
 		
-		$stream->close();
+		return $shift;
 	}
 }

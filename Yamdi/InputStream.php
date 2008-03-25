@@ -29,8 +29,13 @@ class Yamdi_InputStream
 		$this->cursor = 0;
 	}
 	
+	public function __destruct()
+	{
+		$this->close();
+	}
+	
 	/**
-	 * Seeks to specified position
+	 * Seeks with specified offset from current position
 	 *
 	 * @param int $offset
 	 * @return int
@@ -50,9 +55,10 @@ class Yamdi_InputStream
 	 */
 	public function read($size)
 	{
-		$this->cursor += $size;
+		$bytes = fread($this->file_handler, $size);
+		$this->cursor += strlen($bytes);
 		
-		return fread($this->file_handler, $size);
+		return $bytes;
 	}
 	
 	/**
@@ -80,6 +86,10 @@ class Yamdi_InputStream
 	 */
 	public function close()
 	{
-		return fclose($this->file_handler);
+		if (is_resource($this->file_handler)) {
+			return fclose($this->file_handler);
+		} else {
+			return false;
+		}
 	}
 }
