@@ -52,4 +52,9 @@ class Yamdi_FlvMetadataBody
 	{
 		return $this->mixedArray[$name] = $value;
 	}
+	
+	public function clear()
+	{
+		$this->mixedArray = array();
+	}
 }

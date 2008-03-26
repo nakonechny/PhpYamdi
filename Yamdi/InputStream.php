@@ -35,16 +35,32 @@ class Yamdi_InputStream
 	}
 	
 	/**
-	 * Seeks with specified offset from current position
+	 * Seeks on input stream
+	 * with specified offset from current position ($whence = SEEK_CUR)
+	 * or with absolute position ($whence = SEEK_SET)
 	 *
 	 * @param int $offset
+	 * @param int $whence
 	 * @return int
 	 */
-	public function seek($offset)
+	public function seek($offset, $whence = SEEK_CUR)
 	{
-		$this->cursor += $offset;
+		switch ($whence)
+		{
+			case SEEK_CUR:
+				$this->cursor += $offset;
+				break;
+				
+			case SEEK_SET:
+				$this->cursor = $offset;
+				break;
+			
+			default:
+				throw new Exception('Unsupported seek mode'); 
+				break;
+		}
 		
-		return fseek($this->file_handler, $offset, SEEK_CUR);
+		return fseek($this->file_handler, $offset, $whence);
 	}
 	
 	/**

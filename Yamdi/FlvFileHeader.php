@@ -6,6 +6,9 @@
 
 class Yamdi_FlvFileHeader extends Yamdi_Struct
 {
+	const FLAG_AUDIO = 4;
+	const FLAG_VIDEO = 1;
+	
 	protected $dataTypes = array(
 		'signature' => 'a3', 	// Always “FLV”
 		'version' => 'c', 		// Currently 1 for known FLV files
@@ -21,10 +24,10 @@ class Yamdi_FlvFileHeader extends Yamdi_Struct
 	}
 	
 	public function hasVideo(){
-		return $this->flags & 1;
+		return $this->flags & self::FLAG_VIDEO;
 	}
 
 	public function hasAudio(){
-		return $this->flags & 4;
+		return $this->flags & self::FLAG_AUDIO;
 	}
 }
