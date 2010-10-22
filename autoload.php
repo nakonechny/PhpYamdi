@@ -1,12 +1,19 @@
 <?php
+
 /*
- * SabreAMF based on requires
+ *  SabreAMF is loading itself by require_once() instructions, need to set up include_path
  */
-if (!defined('SABREAMF_ROOT')) define('SABREAMF_ROOT', '/home/allen/workspace2/lib');
+if (!defined('SABREAMF_ROOT')) {
+	define('SABREAMF_ROOT', dirname(__FILE__).'/ext/SabreAMF');
+}
 set_include_path(get_include_path() . PATH_SEPARATOR . SABREAMF_ROOT);
 
-/* Yamdi based on autoloads */
-if (!defined('YAMDI_ROOT')) define('YAMDI_ROOT', dirname(__FILE__));
+/*
+ * Yamdi classes are loaded by __autoload() function defined below
+ */
+if (!defined('YAMDI_ROOT')) {
+	define('YAMDI_ROOT', dirname(__FILE__));
+}
 
 global $autoload_map;
 $autoload_map = array(
@@ -18,11 +25,13 @@ function __autoload($class)
 {
 	global $autoload_map;
 	
-	if (false === ($p = strpos($class, '_')))
+	if (false === ($p = strpos($class, '_'))) {
 		$libraryName = $class;
-	else
+	} else {
 		$libraryName = substr($class, 0, $p);
+	}
 
-	if (isset($autoload_map[$libraryName]))
+	if (isset($autoload_map[$libraryName])) {
 		require_once $autoload_map[$libraryName] . str_replace('_', '/', $class) . '.php';
+	}
 }
