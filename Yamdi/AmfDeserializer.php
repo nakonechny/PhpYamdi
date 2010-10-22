@@ -1,7 +1,7 @@
 <?php
 /**
- * @author Allen
- * @package PhpYamdi (http://phpyamdi.berlios.de/)
+ * @author Alexey Nakonechny (nakonechny@gmail.com)
+ * @package PhpYamdi (http://github.com/nakonechny/PhpYamdi)
  */
 
 class Yamdi_AmfDeserializer
@@ -13,7 +13,7 @@ class Yamdi_AmfDeserializer
 	
 	public function __construct($string)
 	{
-		$this->deserializer = new Yamdi_SabreAmfAmf0DeserializerFixed(new SabreAMF_InputStream($string));
+		$this->deserializer = new Yamdi_SabreAmfAmf0Deserializer(new SabreAMF_InputStream($string));
 	}
 	
 	public function read($type = null)

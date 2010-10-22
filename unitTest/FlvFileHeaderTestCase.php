@@ -2,8 +2,8 @@
 /**
  * Simpletest test case
  * 
- * @author Allen
- * @package PhpYamdi (http://phpyamdi.berlios.de/)
+ * @author Alexey Nakonechny (nakonechny@gmail.com)
+ * @package PhpYamdi (http://github.com/nakonechny/PhpYamdi)
  */
 
 require_once dirname(__FILE__).'/../autoload.php';
