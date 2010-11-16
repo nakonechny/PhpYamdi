@@ -4,7 +4,7 @@
  * @package PhpYamdi (http://github.com/nakonechny/PhpYamdi)
  */
 
-class Yamdi_FlvMetadataInjector extends Yamdi_FlvFile
+class Yamdi_FlvKeyframesInjector extends Yamdi_FlvFile
 {
 	/**
 	 * @var array(int)
@@ -27,7 +27,7 @@ class Yamdi_FlvMetadataInjector extends Yamdi_FlvFile
 		/*
 		 * Now it's time to assign any desired metadata fields
 		 */
-		$this->metadata->metadatacreator = "Allen's Php_Yamdi version ".self::$version;
+		$this->metadata->metadatacreator = "PhpYamdi version ".self::$version;
 	}
 	
 	/**
