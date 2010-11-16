@@ -1,37 +1,46 @@
 <?php
 
-/*
- *  SabreAMF is loading itself by require_once() instructions, need to set up include_path
- */
-if (!defined('SABREAMF_ROOT')) {
-	define('SABREAMF_ROOT', dirname(__FILE__).'/ext/SabreAMF');
-}
-set_include_path(get_include_path() . PATH_SEPARATOR . SABREAMF_ROOT);
+PhpYamdiLoader::setLibraryDefaultPath('Yamdi', dirname(__FILE__) . '/');
+PhpYamdiLoader::setLibraryDefaultPath('SabreAMF', dirname(__FILE__) . '/ext/SabreAMF/');
+// SabreAMF is loading itself by require_once() instructions, need to set up include_path
+set_include_path(get_include_path() . PATH_SEPARATOR . PhpYamdiLoader::getLibraryPath('SabreAMF'));
 
-/*
- * Yamdi classes are loaded by __autoload() function defined below
- */
-if (!defined('YAMDI_ROOT')) {
-	define('YAMDI_ROOT', dirname(__FILE__));
-}
+spl_autoload_register(array('PhpYamdiLoader','autoload'));
 
-global $autoload_map;
-$autoload_map = array(
-	'Yamdi'		=> YAMDI_ROOT.'/',
-	'SabreAMF'	=> SABREAMF_ROOT.'/'
-);
-
-function __autoload($class)
+class PhpYamdiLoader
 {
-	global $autoload_map;
+	static public $libraryMap = array();
 	
-	if (false === ($p = strpos($class, '_'))) {
-		$libraryName = $class;
-	} else {
-		$libraryName = substr($class, 0, $p);
+	static public function setLibraryDefaultPath($class_prefix, $path)
+	{
+		if (! array_key_exists($class_prefix, self::$libraryMap)) {
+			self::setLibraryPath($class_prefix, $path);
+		}
 	}
-
-	if (isset($autoload_map[$libraryName])) {
-		require_once $autoload_map[$libraryName] . str_replace('_', '/', $class) . '.php';
+	
+	static public function setLibraryPath($class_prefix, $path)
+	{
+			self::$libraryMap[$class_prefix] = $path;
 	}
+	
+	static public function getLibraryPath($class_prefix)
+	{
+		return array_key_exists($class_prefix, self::$libraryMap) ? self::$libraryMap[$class_prefix] : null; 
+	}
+	
+	static public function autoload($class)
+	{
+		global $autoload_map;
+		
+		if (false === ($p = strpos($class, '_'))) {
+			$libraryName = $class;
+		} else {
+			$libraryName = substr($class, 0, $p);
+		}
+	
+		$path = self::getLibraryPath($libraryName);
+		if ($path) {
+			require_once $path . str_replace('_', '/', $class) . '.php';
+		}
+	}	
 }
