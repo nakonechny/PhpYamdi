@@ -12,7 +12,7 @@ if(! file_exists($filename)) {
 	exit;
 }
 
-require_once dirname(__FILE__).'/../../autoload.php';
+require_once dirname(__FILE__).'/../autoload.php';
 
 $metaReader = new Yamdi_FlvMetadataReader();
 $metaReader->run($filename);
