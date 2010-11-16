@@ -57,4 +57,9 @@ class Yamdi_FlvMetadataBody
 	{
 		$this->mixedArray = array();
 	}
+
+	public function export()
+	{
+		return $this->mixedArray;
+	}
 }
