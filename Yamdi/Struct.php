@@ -88,7 +88,7 @@ abstract class Yamdi_Struct
 	{
 		$quoted_data = array();
 		foreach($this->data as $key=>$value) {
-			$quoted_data[$key] = in_array($this->dataTypes[$key], array('a', 'A', 'h', 'H')) ? '"'.(string)$value.'"' : $value;
+			$quoted_data[$key] = in_array(@$this->dataTypes[$key], array('a', 'A', 'h', 'H')) ? '"'.(string)$value.'"' : $value;
 		}
 
 		$pach_cmd = 'return pack("'.$this->getPackFormat().'", "'.implode('", "', $quoted_data).'");';
